@@ -1,0 +1,69 @@
+[
+  {
+    "model": "store.product",
+    "pk": 1,
+    "fields": {
+      "name": "Apple AirPods",
+      "price": 180
+    }
+  },
+  {
+    "model": "store.product",
+    "pk": 2,
+    "fields": {
+      "name": "Kindle Paperwhite",
+      "price": 85
+    }
+  },
+  {
+    "model": "store.product",
+    "pk": 3,
+    "fields": {
+      "name": "Security Camera",
+      "price": 200
+    }
+  },
+
+  {
+    "model": "store.order",
+    "pk": 1,
+    "fields": {
+      "status": 0
+    }
+  },
+  {
+    "model": "store.orderline",
+    "pk": 1,
+    "fields": {
+      "order": 1,
+      "product": 1,
+      "quantity": 2
+    }
+  },
+  {
+    "model": "store.orderline",
+    "pk": 2,
+    "fields": {
+      "order": 1,
+      "product": 2,
+      "quantity": 1
+    }
+  },
+
+  {
+    "model": "store.order",
+    "pk": 2,
+    "fields": {
+        "status": 2
+    }
+  },
+  {
+    "model": "store.orderline",
+    "pk": 3,
+    "fields": {
+      "order": 2,
+      "product": 1,
+      "quantity": 3
+    }
+  }
+]
