@@ -1,4 +1,4 @@
-.PHONY: example style test
+.PHONY: example style style-check test
 
 example:
 	python example/manage.py runserver
@@ -6,6 +6,10 @@ example:
 style:
 	isort .
 	brunette .
+
+style-check:
+	isort -c .
+	brunette --check .
 
 test:
 	pytest
