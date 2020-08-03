@@ -38,6 +38,13 @@ def root_urlconf(settings):
     settings.ROOT_URLCONF = __name__
 
 
+@pytest.fixture
+def exception_handler(settings):
+    settings.REST_FRAMEWORK = {
+        'EXCEPTION_HANDLER': 'rest_batteries.exception_handlers.errors_formatter_exception_handler'
+    }
+
+
 class TestAPIViewErrors:
     def test_value_error_transforms_into_drf_validation_error(self, api_client):
         response = api_client.post('/value-error/')
@@ -56,4 +63,36 @@ class TestAPIViewErrors:
     ):
         response = api_client.post('/django-field-validation-error/')
         assert response.status_code == 400
-        assert 'Ensure this value has at most' in response.data['title'][0]
+        assert response.data == {
+            'title': ['Ensure this value has at most 255 characters (it has 500).']
+        }
+
+
+@pytest.mark.usefixtures('exception_handler')
+class TestAPIViewErrorsFormat:
+    def test_value_error(self, api_client):
+        response = api_client.post('/value-error/')
+        assert response.status_code == 400
+        assert response.data == {
+            'errors': [{'code': 'invalid', 'message': 'Value error raised'}]
+        }
+
+    def test_validation_error(self, api_client):
+        response = api_client.post('/django-validation-error/')
+        assert response.status_code == 400
+        assert response.data == {
+            'errors': [{'code': 'invalid', 'message': 'Django validation error raised'}]
+        }
+
+    def test_field_validation_error(self, api_client):
+        response = api_client.post('/django-field-validation-error/')
+        assert response.status_code == 400
+        assert response.data == {
+            'errors': [
+                {
+                    'code': 'invalid',
+                    'message': 'Ensure this value has at most 255 characters (it has 500).',
+                    'field': 'title',
+                }
+            ]
+        }
