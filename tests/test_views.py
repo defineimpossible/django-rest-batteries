@@ -1,5 +1,4 @@
 import pytest
-
 from django.core.exceptions import ValidationError
 from django.urls import path
 from rest_batteries.views import APIView
@@ -27,7 +26,10 @@ class APIViewRaisesDjangoFieldValidationError(APIView):
 urlpatterns = [
     path('value-error/', APIViewRaisesValueError.as_view()),
     path('django-validation-error/', APIViewRaisesDjangoValidationError.as_view()),
-    path('django-field-validation-error/', APIViewRaisesDjangoFieldValidationError.as_view()),
+    path(
+        'django-field-validation-error/',
+        APIViewRaisesDjangoFieldValidationError.as_view(),
+    ),
 ]
 
 
@@ -42,12 +44,16 @@ class TestAPIViewErrors:
         assert response.status_code == 400
         assert response.data == ['Value error raised']
 
-    def test_django_validation_error_transforms_into_drf_validation_error(self, api_client):
+    def test_django_validation_error_transforms_into_drf_validation_error(
+        self, api_client
+    ):
         response = api_client.post('/django-validation-error/')
         assert response.status_code == 400
         assert response.data == ['Django validation error raised']
 
-    def test_django_validation_error_transforms_into_drf_validation_error__when_field_error(self, api_client):
+    def test_django_validation_error_transforms_into_drf_validation_error__when_field_error(
+        self, api_client
+    ):
         response = api_client.post('/django-field-validation-error/')
         assert response.status_code == 400
         assert 'Ensure this value has at most' in response.data['title'][0]
