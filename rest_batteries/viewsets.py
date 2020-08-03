@@ -1,9 +1,10 @@
 from typing import Dict, Optional, Type
 
 from django.core.exceptions import ImproperlyConfigured
-from rest_framework import generics, viewsets
+from rest_framework import viewsets
 from rest_framework.serializers import BaseSerializer
 
+from .generics import GenericAPIView
 from .mixins import (
     CreateModelMixin,
     DestroyModelMixin,
@@ -13,7 +14,7 @@ from .mixins import (
 )
 
 
-class GenericViewSet(viewsets.ViewSetMixin, generics.GenericAPIView):
+class GenericViewSet(viewsets.ViewSetMixin, GenericAPIView):
     request_action_serializer_classes: Dict[str, Type[BaseSerializer]] = None
     response_action_serializer_classes: Dict[str, Type[BaseSerializer]] = None
 
