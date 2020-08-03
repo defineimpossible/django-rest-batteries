@@ -114,6 +114,16 @@ class TestArticleViewSet:
         f.CommentFactory.create(article=article_1)
         f.CommentFactory.create(article=article_1)
 
+        response = api_client.delete(f'/articles/{article_1.id}/')
+        assert response.status_code == 204
+        assert Article.objects.get(id=article_1.id).is_deleted is True
+        assert Article.objects.get(id=article_1.id).comments.count() == 2
+
+    def test_destroy_article__when_with_comments(self, api_client):
+        article_1 = f.ArticleFactory.create()
+        f.CommentFactory.create(article=article_1)
+        f.CommentFactory.create(article=article_1)
+
         response = api_client.delete(
             f'/articles/{article_1.id}/', {'with_comments': True}
         )
