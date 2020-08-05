@@ -118,6 +118,14 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 
+# django-rest-framework
+# https://www.django-rest-framework.org/
+
+REST_FRAMEWORK = {
+    'EXCEPTION_HANDLER': 'rest_batteries.exception_handlers.errors_formatter_exception_handler'
+}
+
+
 # django-debug-toolbar
 # https://django-debug-toolbar.readthedocs.io/en/latest/installation.html
 
