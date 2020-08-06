@@ -27,6 +27,10 @@ script:
   - make style-check
   - make test
 
+after_success:
+  - pip install codecov
+  - codecov
+
 notifications:
   email:
     on_success: never
