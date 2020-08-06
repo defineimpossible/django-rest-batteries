@@ -1,12 +1,14 @@
 [tool.poetry]
 name = "django-rest-batteries"
 version = "0.1.0"
-description = "Make DRF great again"
+description = "Build clean APIs with DRF faster"
 authors = ["Define Impossible <hi@defineimpossible.io>"]
 packages = [
     { include = "rest_batteries" }
 ]
 license = "MIT"
+readme = "README.md"
+repository = "https://github.com/defineimpossible/django-rest-batteries"
 
 [tool.poetry.dependencies]
 python = "^3.6"
