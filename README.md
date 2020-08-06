@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/defineimpossible/django-rest-batteries.svg?branch=master)](https://travis-ci.org/github/defineimpossible/django-rest-batteries)
+
 # Django REST Framework Batteries
 
 Build clean APIs with DRF faster.
