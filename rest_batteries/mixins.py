@@ -130,7 +130,7 @@ class DestroyModelMixin:
 
     def destroy(self, request, *_args, **_kwargs):
         instance = self.get_object()
-        serializer = self.maybe_get_request_serializer(instance, data=request.data)
+        serializer = self.get_request_serializer_or_none(instance, data=request.data)
         if serializer is not None:
             serializer.is_valid(raise_exception=True)
             self.perform_destroy(instance, serializer)
