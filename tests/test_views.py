@@ -45,7 +45,9 @@ class APIViewRaisesArrayFieldValidationError(APIView):
             children = ChildSerializer(many=True)
 
         serializer = ParentSerializer(
-            data={'children': [{'text': 'comment-text'}, {'text': False}, {'text': False}]}
+            data={
+                'children': [{'text': 'comment-text'}, {'text': False}, {'text': False}]
+            }
         )
         serializer.is_valid(raise_exception=True)
 
@@ -159,6 +161,6 @@ class TestAPIViewErrorsFormat:
                     'code': 'invalid',
                     'message': 'Not a valid string.',
                     'field': 'children[2].text',
-                }
+                },
             ]
         }

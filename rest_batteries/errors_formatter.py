@@ -120,7 +120,9 @@ class ErrorsFormatter:
                     else:
                         path = '{0}[{1}]'.format(new_field_path, index)
                         current_level_error_list.extend(
-                            self._get_list_of_errors(field_path=path, errors_dict=field_error)
+                            self._get_list_of_errors(
+                                field_path=path, errors_dict=field_error
+                            )
                         )
             else:
                 path = field_path if key_is_non_field_errors else new_field_path
