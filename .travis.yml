@@ -25,7 +25,7 @@ install:
 
 script:
   - make style-check
-  - make test
+  - make test-cov
 
 after_success:
   - pip install codecov

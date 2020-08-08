@@ -2,6 +2,7 @@ import pytest
 from django.core.exceptions import ValidationError
 from django.urls import path
 from rest_batteries.views import APIView
+from rest_framework import serializers
 
 from .models import Article
 
@@ -23,12 +24,46 @@ class APIViewRaisesDjangoFieldValidationError(APIView):
         article.save()
 
 
+class APIViewRaisesObjectFieldValidationError(APIView):
+    def post(self, _request, *_args, **_kwargs):
+        class ChildSerializer(serializers.Serializer):
+            text = serializers.CharField()
+
+        class ParentSerializer(serializers.Serializer):
+            child = ChildSerializer()
+
+        serializer = ParentSerializer(data={'child': {'text': False}})
+        serializer.is_valid(raise_exception=True)
+
+
+class APIViewRaisesArrayFieldValidationError(APIView):
+    def post(self, _request, *_args, **_kwargs):
+        class ChildSerializer(serializers.Serializer):
+            text = serializers.CharField()
+
+        class ParentSerializer(serializers.Serializer):
+            children = ChildSerializer(many=True)
+
+        serializer = ParentSerializer(
+            data={'children': [{'text': 'comment-text'}, {'text': False}, {'text': False}]}
+        )
+        serializer.is_valid(raise_exception=True)
+
+
 urlpatterns = [
     path('value-error/', APIViewRaisesValueError.as_view()),
     path('django-validation-error/', APIViewRaisesDjangoValidationError.as_view()),
     path(
         'django-field-validation-error/',
         APIViewRaisesDjangoFieldValidationError.as_view(),
+    ),
+    path(
+        'object-field-validation-error/',
+        APIViewRaisesObjectFieldValidationError.as_view(),
+    ),
+    path(
+        'array-field-validation-error/',
+        APIViewRaisesArrayFieldValidationError.as_view(),
     ),
 ]
 
@@ -93,6 +128,37 @@ class TestAPIViewErrorsFormat:
                     'code': 'invalid',
                     'message': 'Ensure this value has at most 255 characters (it has 500).',
                     'field': 'title',
+                }
+            ]
+        }
+
+    def test_object_field_validation_error(self, api_client):
+        response = api_client.post('/object-field-validation-error/')
+        assert response.status_code == 400
+        assert response.data == {
+            'errors': [
+                {
+                    'code': 'invalid',
+                    'message': 'Not a valid string.',
+                    'field': 'child.text',
+                }
+            ]
+        }
+
+    def test_array_field_validation_error(self, api_client):
+        response = api_client.post('/array-field-validation-error/')
+        assert response.status_code == 400
+        assert response.data == {
+            'errors': [
+                {
+                    'code': 'invalid',
+                    'message': 'Not a valid string.',
+                    'field': 'children[1].text',
+                },
+                {
+                    'code': 'invalid',
+                    'message': 'Not a valid string.',
+                    'field': 'children[2].text',
                 }
             ]
         }

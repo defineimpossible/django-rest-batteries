@@ -4,7 +4,7 @@ from rest_framework.settings import api_settings
 
 class ErrorsFormatter:
     """
-    Code is copied from https://github.com/HackSoftware/Django-Styleguide
+    Mostly copied from https://github.com/HackSoftware/Django-Styleguide
     TODO: Refactor later
 
     The current formatter gets invalid serializer errors,
@@ -109,14 +109,19 @@ class ErrorsFormatter:
                 current_level_error_list = []
                 new_value = value
 
-                for error in new_value:
+                for index, error in enumerate(new_value):
                     # if the type of field_error is list we need to unpack it
                     field_error = self._unpack(error)
 
-                    if not key_is_non_field_errors:
-                        field_error[self.FIELD] = new_field_path
-
-                    current_level_error_list.append(field_error)
+                    if self.MESSAGE in field_error:
+                        if not key_is_non_field_errors:
+                            field_error[self.FIELD] = new_field_path
+                        current_level_error_list.append(field_error)
+                    else:
+                        path = '{0}[{1}]'.format(new_field_path, index)
+                        current_level_error_list.extend(
+                            self._get_list_of_errors(field_path=path, errors_dict=field_error)
+                        )
             else:
                 path = field_path if key_is_non_field_errors else new_field_path
 
