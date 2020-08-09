@@ -31,18 +31,6 @@ after_success:
   - pip install codecov
   - codecov
 
-before_deploy:
-  - poetry config http-basic.pypi $SECURE_USER $SECURE_PASSWORD
-  - poetry build
-
-deploy:
-  provider: script
-  script: poetry publish
-  on:
-    branch: master
-    tags: true
-    condition: $TRAVIS_PYTHON_VERSION = 3.7 && $DJANGO_VERSION ~= ^3.0 && $DRF_VERSION ~= ^3.11
-
 notifications:
   email:
     on_success: never
