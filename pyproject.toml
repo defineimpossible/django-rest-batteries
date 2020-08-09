@@ -10,6 +10,12 @@ license = "MIT"
 readme = "README.md"
 homepage = "https://github.com/defineimpossible/django-rest-batteries"
 repository = "https://github.com/defineimpossible/django-rest-batteries"
+keywords = [
+    "django rest framework",
+    "drf",
+    "django",
+    "batteries",
+]
 
 [tool.poetry.dependencies]
 python = "^3.6"
