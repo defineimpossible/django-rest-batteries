@@ -18,22 +18,6 @@ class GenericViewSet(viewsets.ViewSetMixin, GenericAPIView):
     request_action_serializer_classes: Dict[str, Type[BaseSerializer]] = None
     response_action_serializer_classes: Dict[str, Type[BaseSerializer]] = None
 
-    def get_request_serializer(self, *args, **kwargs) -> BaseSerializer:
-        serializer = self.get_request_serializer_or_none(*args, **kwargs)
-        if serializer is None:
-            raise ImproperlyConfigured(
-                f'{self.__class__.__name__} should properly configure `request_action_serializer_classes` attribute'
-            )
-        return serializer
-
-    def get_request_serializer_or_none(
-        self, *args, **kwargs
-    ) -> Optional[BaseSerializer]:
-        serializer_class = self.get_request_serializer_class_or_none()
-        if serializer_class is not None:
-            kwargs.setdefault('context', self.get_request_serializer_context())
-            return serializer_class(*args, **kwargs)
-
     def get_request_serializer_class_or_none(self) -> Optional[Type[BaseSerializer]]:
         serializer_class = None
 
@@ -42,26 +26,15 @@ class GenericViewSet(viewsets.ViewSetMixin, GenericAPIView):
             if serializer_class is None and self.action == 'partial_update':
                 serializer_class = self.request_action_serializer_classes.get('update')
 
+        if serializer_class is None:
+            return super().get_request_serializer_class_or_none()
+
         return serializer_class
 
-    def get_request_serializer_context(self):
-        return self.get_serializer_context()
-
-    def get_response_serializer(self, *args, **kwargs) -> BaseSerializer:
-        serializer = self.get_response_serializer_or_none(*args, **kwargs)
-        if serializer is None:
-            raise ImproperlyConfigured(
-                f'{self.__class__.__name__} should properly configure `response_action_serializer_classes` attribute'
-            )
-        return serializer
-
-    def get_response_serializer_or_none(
-        self, *args, **kwargs
-    ) -> Optional[BaseSerializer]:
-        serializer_class = self.get_response_serializer_class_or_none()
-        if serializer_class is not None:
-            kwargs.setdefault('context', self.get_response_serializer_context())
-            return serializer_class(*args, **kwargs)
+    def raise_request_serializer_error(self):
+        raise ImproperlyConfigured(
+            f'{self.__class__.__name__} should properly configure `request_action_serializer_classes` attribute'
+        )
 
     def get_response_serializer_class_or_none(self) -> Optional[Type[BaseSerializer]]:
         serializer_class = None
@@ -71,19 +44,17 @@ class GenericViewSet(viewsets.ViewSetMixin, GenericAPIView):
             if serializer_class is None and self.action == 'partial_update':
                 serializer_class = self.response_action_serializer_classes.get('update')
 
+        if serializer_class is None:
+            return super().get_response_serializer_class_or_none()
+
         return serializer_class
 
-    def get_response_serializer_context(self):
-        return self.get_serializer_context()
+    def raise_response_serializer_error(self):
+        raise ImproperlyConfigured(
+            f'{self.__class__.__name__} should properly configure `response_action_serializer_classes` attribute'
+        )
 
-    def get_serializer_class(self) -> Type[BaseSerializer]:
-        response_serializer_class = self.get_response_serializer_class_or_none()
-        if response_serializer_class is not None:
-            return response_serializer_class
-
-        if self.serializer_class is not None:
-            return self.serializer_class
-
+    def raise_serializer_error(self):
         raise ImproperlyConfigured(
             f'{self.__class__.__name__} should properly configure one of these attributes: '
             f'`response_action_serializer_classes`, `serializer_class`'
