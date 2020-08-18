@@ -10,7 +10,7 @@ Build clean APIs with DRF faster.
 Here's a quick overview of what the library has at the moment:
 
 - Action-based serializers for ViewSets
-- Two serializers per request/response cycle for ViewSets
+- Two serializers per request/response cycle for ViewSets and GenericAPIViews
 - Single format for all errors
 
 # Requirements
@@ -47,7 +47,9 @@ class OrderViewSet(RetrieveModelMixin,
 
 ## Two serializers per request/response cycle for ViewSets
 
-We found that more often than not we need a separate serializer for handling request payload and a separate serializer for generating response data. How to achieve it in a ViewSet:
+We found that more often than not we need a separate serializer for handling request payload and a separate serializer for generating response data.
+
+How to achieve it in ViewSet:
 
 ```python
 from rest_batteries.mixins import CreateModelMixin, ListModelMixin
@@ -65,7 +67,18 @@ class OrderViewSet(CreateModelMixin,
         'list': OrderResponseSerializer,
         'cancel': OrderResponseSerializer,
     }
-    ...
+```
+
+How to achieve it in GenericAPIView:
+
+```python
+from rest_batteries.generics import CreateAPIView
+...
+
+
+class OrderCreateView(CreateAPIView):
+    request_serializer_class = OrderCreateSerializer
+    response_serializer_class = OrderResponseSerializer
 ```
 
 ## Single format for all errors
