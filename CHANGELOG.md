@@ -1,3 +1,10 @@
+# Version 1.1.0
+
+**Added:**
+
+- Added ability for GenericAPIViews to have two serializers per request/response cycle
+
+
 # Version 1.0.0
 
 **Added:**
