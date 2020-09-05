@@ -46,7 +46,7 @@ class OrderViewSet(RetrieveModelMixin,
     }
 ```
 
-## Two serializers per request/response
+## Two serializers per request/response cycle
 
 We found that more often than not we need a separate serializer for handling request payload and a separate serializer for generating response data.
 
