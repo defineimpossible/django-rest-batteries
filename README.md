@@ -87,9 +87,9 @@ class OrderCreateView(CreateAPIView):
 Each action can have a separate set of permissions:
 
 ```python
-from rest_framework.mixins import CreateModelMixin, UpdateModelMixin, ListModelMixin
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_batteries.mixins import CreateModelMixin, UpdateModelMixin, ListModelMixin
 from rest_batteries.viewsets import GenericViewSet
+from rest_framework.permissions import AllowAny, IsAuthenticated
 ...
 
 class OrderViewSet(CreateModelMixin,
