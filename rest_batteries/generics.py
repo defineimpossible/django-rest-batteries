@@ -15,9 +15,9 @@ from .mixins import (
 
 
 class GenericAPIView(APIErrorsMixin, generics.GenericAPIView):
-    request_serializer_class: Type[BaseSerializer] = None
-    destroy_request_serializer_class: Type[BaseSerializer] = None
-    response_serializer_class: Type[BaseSerializer] = None
+    request_serializer_class: Optional[Type[BaseSerializer]] = None
+    destroy_request_serializer_class: Optional[Type[BaseSerializer]] = None
+    response_serializer_class: Optional[Type[BaseSerializer]] = None
 
     def get_request_serializer(self, *args, **kwargs) -> BaseSerializer:
         serializer = self.get_request_serializer_or_none(*args, **kwargs)
