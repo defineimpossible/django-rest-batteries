@@ -1,3 +1,9 @@
+# Version 1.2.0
+
+**Added:**
+
+- Added action-based permissions for ViewSets
+
 # Version 1.1.0
 
 **Added:**
