@@ -11,6 +11,7 @@ Here's a quick overview of what the library has at the moment:
 
 - Action-based serializers for ViewSets
 - Two serializers per request/response cycle for ViewSets and GenericAPIViews
+- Action-based permissions for ViewSets
 - Single format for all errors
 
 # Requirements
@@ -29,7 +30,7 @@ $ pip install django-rest-batteries
 
 ## Action-based serializers for ViewSets
 
-Each of your actions can have a separate serializer:
+Each action can have a separate serializer:
 
 ```python
 from rest_batteries.mixins import RetrieveModelMixin, ListModelMixin
@@ -45,7 +46,7 @@ class OrderViewSet(RetrieveModelMixin,
     }
 ```
 
-## Two serializers per request/response cycle for ViewSets
+## Two serializers per request/response
 
 We found that more often than not we need a separate serializer for handling request payload and a separate serializer for generating response data.
 
@@ -79,6 +80,27 @@ from rest_batteries.generics import CreateAPIView
 class OrderCreateView(CreateAPIView):
     request_serializer_class = OrderCreateSerializer
     response_serializer_class = OrderResponseSerializer
+```
+
+## Action-based permissions for ViewSets
+
+Each action can have a separate set of permissions:
+
+```python
+from rest_framework.mixins import CreateModelMixin, UpdateModelMixin, ListModelMixin
+from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_batteries.viewsets import GenericViewSet
+...
+
+class OrderViewSet(CreateModelMixin,
+                   UpdateModelMixin,
+                   ListModelMixin,
+                   GenericViewSet):
+    action_permission_classes = {
+        'create': IsAuthenticated,
+        'update': [IsAuthenticated, IsOrderOwner],
+        'list': AllowAny,
+    }
 ```
 
 ## Single format for all errors

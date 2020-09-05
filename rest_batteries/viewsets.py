@@ -1,7 +1,8 @@
-from typing import Dict, Optional, Type
+from typing import Dict, Iterable, Optional, Type, Union
 
 from django.core.exceptions import ImproperlyConfigured
 from rest_framework import viewsets
+from rest_framework.permissions import BasePermission
 from rest_framework.serializers import BaseSerializer
 
 from .generics import GenericAPIView
@@ -15,8 +16,31 @@ from .mixins import (
 
 
 class GenericViewSet(viewsets.ViewSetMixin, GenericAPIView):
-    request_action_serializer_classes: Dict[str, Type[BaseSerializer]] = None
-    response_action_serializer_classes: Dict[str, Type[BaseSerializer]] = None
+    action_permission_classes: Optional[
+        Dict[str, Union[Type[BasePermission], Iterable[Type[BasePermission]]]]
+    ] = None
+    request_action_serializer_classes: Optional[Dict[str, Type[BaseSerializer]]] = None
+    response_action_serializer_classes: Optional[Dict[str, Type[BaseSerializer]]] = None
+
+    def get_permission_classes_or_none(self):
+        if self.action_permission_classes:
+            permission_classes = self.action_permission_classes.get(self.action)
+            if permission_classes is None and self.action == 'partial_update':
+                permission_classes = self.action_permission_classes.get('update')
+            return permission_classes
+
+    def get_permissions(self):
+        permissions = super().get_permissions()
+
+        permission_classes = self.get_permission_classes_or_none()
+        if permission_classes is not None:
+            if isinstance(permission_classes, Iterable):
+                for permission_class in permission_classes:
+                    permissions.append(permission_class())
+            else:
+                permissions.append(permission_classes())
+
+        return permissions
 
     def get_request_serializer_class_or_none(self) -> Optional[Type[BaseSerializer]]:
         serializer_class = None
