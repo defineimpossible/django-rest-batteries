@@ -47,6 +47,13 @@ class ErrorsFormatter:
 
         return formatted_errors
 
+    def get_field_name(self, field_name):
+        """
+        Override this method if you want to change a field name returned in the response.
+        For example, convert snake_case field name to camelCase.
+        """
+        return field_name
+
     def _get_response_json_from_drf_errors(self, serializer_errors=None):
         if serializer_errors is None:
             serializer_errors = {}
@@ -60,13 +67,8 @@ class ErrorsFormatter:
 
         return response_data
 
-    def _get_response_json_from_error_message(
-        self, *, message='', field=None, code='error'
-    ):
+    def _get_response_json_from_error_message(self, *, message='', code='error'):
         response_data = {self.ERRORS: [{self.MESSAGE: message, self.CODE: code}]}
-
-        if field:
-            response_data[self.ERRORS][self.FIELD] = field
 
         return response_data
 
@@ -102,7 +104,11 @@ class ErrorsFormatter:
 
         errors_list = []
         for key, value in errors_dict.items():
-            new_field_path = '{0}.{1}'.format(field_path, key) if field_path else key
+            new_field_path = (
+                '{0}.{1}'.format(field_path, self.get_field_name(key))
+                if field_path
+                else self.get_field_name(key)
+            )
             key_is_non_field_errors = key == api_settings.NON_FIELD_ERRORS_KEY
 
             if type(value) is list:

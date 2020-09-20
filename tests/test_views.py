@@ -1,8 +1,10 @@
 import pytest
 from django.core.exceptions import ValidationError
 from django.urls import path
+from rest_batteries.errors_formatter import ErrorsFormatter
 from rest_batteries.views import APIView
 from rest_framework import serializers
+from rest_framework.views import exception_handler as drf_exception_handler
 
 from .models import Article
 
@@ -80,6 +82,27 @@ def exception_handler(settings):
     settings.REST_FRAMEWORK = {
         'EXCEPTION_HANDLER': 'rest_batteries.exception_handlers.errors_formatter_exception_handler'
     }
+
+
+@pytest.fixture
+def custom_exception_handler(settings):
+    class CustomErrorsFormatter(ErrorsFormatter):
+        def get_field_name(self, field_name):
+            return 'custom_' + field_name
+
+    def _handler(exc, context):
+        response = drf_exception_handler(exc, context)
+
+        if response is None:
+            return response
+
+        formatter = CustomErrorsFormatter(exc)
+
+        response.data = formatter()
+
+        return response
+
+    settings.REST_FRAMEWORK = {'EXCEPTION_HANDLER': _handler}
 
 
 class TestAPIViewErrors:
@@ -161,6 +184,40 @@ class TestAPIViewErrorsFormat:
                     'code': 'invalid',
                     'message': 'Not a valid string.',
                     'field': 'children[2].text',
+                },
+            ]
+        }
+
+
+@pytest.mark.usefixtures('custom_exception_handler')
+class TestAPIViewCustomErrorsFormat:
+    def test_object_field_validation_error(self, api_client):
+        response = api_client.post('/object-field-validation-error/')
+        assert response.status_code == 400
+        assert response.data == {
+            'errors': [
+                {
+                    'code': 'invalid',
+                    'message': 'Not a valid string.',
+                    'field': 'custom_child.custom_text',
+                }
+            ]
+        }
+
+    def test_array_field_validation_error(self, api_client):
+        response = api_client.post('/array-field-validation-error/')
+        assert response.status_code == 400
+        assert response.data == {
+            'errors': [
+                {
+                    'code': 'invalid',
+                    'message': 'Not a valid string.',
+                    'field': 'custom_children[1].custom_text',
+                },
+                {
+                    'code': 'invalid',
+                    'message': 'Not a valid string.',
+                    'field': 'custom_children[2].custom_text',
                 },
             ]
         }
