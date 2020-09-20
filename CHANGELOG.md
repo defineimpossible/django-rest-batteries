@@ -1,3 +1,9 @@
+# Version 1.2.1
+
+**Added:**
+
+- Added `get_field_name` public method to `ErrorsFormatter` class
+
 # Version 1.2.0
 
 **Added:**
