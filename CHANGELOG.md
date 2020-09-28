@@ -1,3 +1,9 @@
+# Version 1.2.2
+
+**Added:**
+
+- Split `UpdateModelMixin` into two mixins: `FullUpdateModelMixin` and `PartialUpdateModelMixin`
+
 # Version 1.2.1
 
 **Added:**
