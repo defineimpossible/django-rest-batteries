@@ -156,9 +156,7 @@ class TestArticleViewSet:
         )
         assert response.status_code == 403
 
-    def test_partial_update_article__method_not_allowed(
-        self, test_user_api_client
-    ):
+    def test_partial_update_article__method_not_allowed(self, test_user_api_client):
         article_1 = f.ArticleFactory.create()
 
         title = 'test-article-title'
