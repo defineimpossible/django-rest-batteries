@@ -92,12 +92,8 @@ class ListModelMixin:
         return Response(serializer.data)
 
 
-class UpdateModelMixin:
-    """
-    Update a model instance.
-    """
-
-    def update(self, request, *_args, **kwargs):
+class _UpdateMixin:
+    def _update(self, request, *_args, **kwargs):
         partial = kwargs.pop('partial', False)
         instance = self.get_object()
         request_serializer = self.get_request_serializer(
@@ -105,7 +101,10 @@ class UpdateModelMixin:
         )
         request_serializer.is_valid(raise_exception=True)
 
-        instance = self.perform_update(instance, request_serializer)
+        if partial:
+            instance = self.perform_partial_update(instance, request_serializer)
+        else:
+            instance = self.perform_update(instance, request_serializer)
 
         if getattr(instance, '_prefetched_objects_cache', None):
             # If 'prefetch_related' has been applied to a queryset, we need to
@@ -118,9 +117,40 @@ class UpdateModelMixin:
     def perform_update(self, instance, serializer):
         return serializer.save()
 
-    def partial_update(self, request, *args, **kwargs):
+    def perform_partial_update(self, instance, serializer):
+        return self.perform_update(instance, serializer)
+
+
+class UpdateModelMixin(_UpdateMixin):
+    """
+    Update a model instance.
+    """
+
+    def update(self, *args, **kwargs):
+        return self._update(*args, **kwargs)
+
+    def partial_update(self, *args, **kwargs):
         kwargs['partial'] = True
-        return self.update(request, *args, **kwargs)
+        return self.update(*args, **kwargs)
+
+
+class FullUpdateModelMixin(_UpdateMixin):
+    """
+    Fully update a model instance.
+    """
+
+    def update(self, *args, **kwargs):
+        return self._update(*args, **kwargs)
+
+
+class PartialUpdateModelMixin(_UpdateMixin):
+    """
+    Partially update a model instance.
+    """
+
+    def partial_update(self, *args, **kwargs):
+        kwargs['partial'] = True
+        return self._update(*args, **kwargs)
 
 
 class DestroyModelMixin:

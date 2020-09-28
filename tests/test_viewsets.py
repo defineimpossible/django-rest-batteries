@@ -1,5 +1,14 @@
 import pytest
-from rest_batteries.viewsets import ModelViewSet
+from django.contrib.auth import get_user_model
+from rest_batteries.mixins import (
+    CreateModelMixin,
+    DestroyModelMixin,
+    FullUpdateModelMixin,
+    ListModelMixin,
+    PartialUpdateModelMixin,
+    RetrieveModelMixin,
+)
+from rest_batteries.viewsets import GenericViewSet, ModelViewSet
 from rest_framework import routers
 from rest_framework.permissions import AllowAny, IsAuthenticated
 
@@ -11,10 +20,20 @@ from .serializers import (
     ArticleResponseSerializer,
     CommentRequestSerializer,
     CommentResponseSerializer,
+    UserSerializer,
 )
 
+User = get_user_model()
 
-class ArticleViewSet(ModelViewSet):
+
+class ArticleViewSet(
+    CreateModelMixin,
+    ListModelMixin,
+    RetrieveModelMixin,
+    FullUpdateModelMixin,
+    DestroyModelMixin,
+    GenericViewSet,
+):
     queryset = Article.objects.all()
     action_permission_classes = {
         'list': (AllowAny,),
@@ -59,9 +78,20 @@ class CommentViewSet(ModelViewSet):
     }
 
 
+class UserViewSet(PartialUpdateModelMixin, GenericViewSet):
+    queryset = User.objects.all()
+    request_action_serializer_classes = {
+        'update': UserSerializer,
+    }
+    response_action_serializer_classes = {
+        'update': UserSerializer,
+    }
+
+
 router = routers.SimpleRouter()
 router.register(r'articles', ArticleViewSet, basename='article')
 router.register(r'comments', CommentViewSet, basename='comment')
+router.register(r'users', UserViewSet, basename='user')
 
 urlpatterns = router.urls
 
@@ -126,23 +156,16 @@ class TestArticleViewSet:
         )
         assert response.status_code == 403
 
-    def test_partial_update_article(self, test_user_api_client):
+    def test_partial_update_article__method_not_allowed(
+        self, test_user_api_client
+    ):
         article_1 = f.ArticleFactory.create()
 
         title = 'test-article-title'
         response = test_user_api_client.patch(
             f'/articles/{article_1.id}/', {'title': title}
         )
-        assert response.status_code == 200
-        assert response.data['id'] == article_1.id
-        assert response.data['title'] == title
-
-    def test_partial_update_article__when_not_authenticated(self, api_client):
-        article_1 = f.ArticleFactory.create()
-
-        title = 'test-article-title'
-        response = api_client.patch(f'/articles/{article_1.id}/', {'title': title})
-        assert response.status_code == 403
+        assert response.status_code == 405
 
     def test_destroy_article(self, test_user_api_client):
         article_1 = f.ArticleFactory.create()
@@ -227,3 +250,14 @@ class TestCommentViewSet:
 
         response = api_client.delete(f'/comments/{comment_1.id}/')
         assert response.status_code == 204
+
+
+class TestUserViewSet:
+    def test_partial_update_user(self, api_client):
+        user_1 = f.UserFactory.create()
+
+        username = 'test-username'
+        response = api_client.patch(f'/users/{user_1.id}/', {'username': username})
+        assert response.status_code == 200
+        assert response.data['id'] == user_1.id
+        assert response.data['username'] == username
