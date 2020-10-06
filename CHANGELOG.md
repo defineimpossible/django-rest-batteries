@@ -1,3 +1,13 @@
+# Version 1.3.0
+
+**Added:**
+
+- Added `DjangoValidationErrorTransformMixin` mixin
+
+**Removed:**
+
+- Removed `APIErrorsMixin` mixin
+
 # Version 1.2.2
 
 **Added:**
