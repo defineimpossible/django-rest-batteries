@@ -5,16 +5,16 @@ from rest_framework import generics
 from rest_framework.serializers import BaseSerializer
 
 from .mixins import (
-    APIErrorsMixin,
     CreateModelMixin,
     DestroyModelMixin,
+    DjangoValidationErrorTransformMixin,
     ListModelMixin,
     RetrieveModelMixin,
     UpdateModelMixin,
 )
 
 
-class GenericAPIView(APIErrorsMixin, generics.GenericAPIView):
+class GenericAPIView(DjangoValidationErrorTransformMixin, generics.GenericAPIView):
     request_serializer_class: Optional[Type[BaseSerializer]] = None
     destroy_request_serializer_class: Optional[Type[BaseSerializer]] = None
     response_serializer_class: Optional[Type[BaseSerializer]] = None

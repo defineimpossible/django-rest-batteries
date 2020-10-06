@@ -55,7 +55,6 @@ class APIViewRaisesArrayFieldValidationError(APIView):
 
 
 urlpatterns = [
-    path('value-error/', APIViewRaisesValueError.as_view()),
     path('django-validation-error/', APIViewRaisesDjangoValidationError.as_view()),
     path(
         'django-field-validation-error/',
@@ -106,11 +105,6 @@ def custom_exception_handler(settings):
 
 
 class TestAPIViewErrors:
-    def test_value_error_transforms_into_drf_validation_error(self, api_client):
-        response = api_client.post('/value-error/')
-        assert response.status_code == 400
-        assert response.data == ['Value error raised']
-
     def test_django_validation_error_transforms_into_drf_validation_error(
         self, api_client
     ):
@@ -130,13 +124,6 @@ class TestAPIViewErrors:
 
 @pytest.mark.usefixtures('exception_handler')
 class TestAPIViewErrorsFormat:
-    def test_value_error(self, api_client):
-        response = api_client.post('/value-error/')
-        assert response.status_code == 400
-        assert response.data == {
-            'errors': [{'code': 'invalid', 'message': 'Value error raised'}]
-        }
-
     def test_validation_error(self, api_client):
         response = api_client.post('/django-validation-error/')
         assert response.status_code == 400
@@ -150,7 +137,7 @@ class TestAPIViewErrorsFormat:
         assert response.data == {
             'errors': [
                 {
-                    'code': 'invalid',
+                    'code': 'max_length',
                     'message': 'Ensure this value has at most 255 characters (it has 500).',
                     'field': 'title',
                 }
