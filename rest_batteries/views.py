@@ -1,7 +1,7 @@
 from rest_framework import views
 
-from .mixins import APIErrorsMixin
+from .mixins import DjangoValidationErrorTransformMixin
 
 
-class APIView(APIErrorsMixin, views.APIView):
+class APIView(DjangoValidationErrorTransformMixin, views.APIView):
     pass
