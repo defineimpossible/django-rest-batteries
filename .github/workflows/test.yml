@@ -1,0 +1,48 @@
+---
+name: Test
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+
+jobs:
+  build:
+    name: Build (Python ${{ matrix.python-version }}, Django ${{ matrix.django-version }}, DRF ${{ matrix.drf-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      max-parallel: 5
+      matrix:
+        python-version: ['3.6', '3.7', '3.8']
+        django-version: ['2.2', '3.0', '3.1']
+        drf-version: ['3.10', '3.11', '3.12']
+
+    steps:
+      - uses: actions/checkout@v3.5.0
+      - uses: actions/setup-python@v4.5.0
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Run image
+        uses: abatilo/actions-poetry@v2
+        with:
+          poetry-version: ${{ matrix.poetry-version }}
+      - name: Install dependencies
+        run: poetry install
+      - name: Upgrade django version
+        run: |
+          poetry run pip install "Django==${{ matrix.django-version }}"
+      - name: Upgrade drf version
+        run: |
+          poetry run pip install "djangorestframework==${{ matrix.drf-version }}"
+      - name: Run style checks
+        run: make style-check
+      - name: Run tests
+        run: make test
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          files: ./coverage.xml
+          fail_ci_if_error: true
+          verbose: true
