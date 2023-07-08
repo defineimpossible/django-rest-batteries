@@ -16,3 +16,4 @@ test:
 
 test-cov:
 	poetry run pytest --cov=rest_batteries --cov-branch --cov-report=term:skip-covered --cov-report=html
+	poetry run coverage xml
