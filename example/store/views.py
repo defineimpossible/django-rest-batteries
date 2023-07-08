@@ -9,7 +9,9 @@ from .services import cancel_order, create_order
 
 
 class OrderViewSet(
-    CreateModelMixin, ListModelMixin, GenericViewSet,
+    CreateModelMixin,
+    ListModelMixin,
+    GenericViewSet,
 ):
     queryset = Order.objects.prefetch_related('lines__product')
     request_action_serializer_classes = {
