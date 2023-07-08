@@ -17,8 +17,8 @@ Here's a quick overview of what the library has at the moment:
 # Requirements
 
 - Python ≥ 3.8
-- Django >= 3.2
-- Django REST Framework >= 3.12
+- Django ≥ 3.2
+- Django REST Framework ≥ 3.12
 
 # Installation
 
