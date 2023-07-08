@@ -1,3 +1,9 @@
+# Version 1.4.0
+
+**Fixed:**
+
+- Updated outdated dependencies
+
 # Version 1.3.0
 
 **Added:**
