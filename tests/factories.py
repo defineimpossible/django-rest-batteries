@@ -8,7 +8,7 @@ from .models import Article, Comment
 User = get_user_model()
 
 
-class ArticleFactory(factory.DjangoModelFactory):
+class ArticleFactory(factory.django.DjangoModelFactory):
     title = factory.Sequence(lambda n: f'article-title-{n}')
     text = factory.Sequence(lambda n: f'article-text-{n}')
 
@@ -16,7 +16,7 @@ class ArticleFactory(factory.DjangoModelFactory):
         model = Article
 
 
-class CommentFactory(factory.DjangoModelFactory):
+class CommentFactory(factory.django.DjangoModelFactory):
     article = factory.SubFactory('tests.factories.ArticleFactory')
     text = factory.Sequence(lambda n: f'comment-text-{n}')
 
@@ -24,25 +24,17 @@ class CommentFactory(factory.DjangoModelFactory):
         model = Comment
 
 
-class UserFactory(factory.DjangoModelFactory):
+class UserFactory(factory.django.DjangoModelFactory):
     username = factory.Sequence(lambda n: 'username-{n}')
+    password = factory.Faker(
+        'password',
+        length=10,
+        special_chars=True,
+        digits=True,
+        upper_case=True,
+        lower_case=True,
+    )
     email = factory.Faker('email')
 
     class Meta:
         model = User
-
-    @factory.post_generation
-    def password(self, _create: bool, extracted: Sequence[Any], **_kwargs):
-        password = (
-            extracted
-            if extracted
-            else factory.Faker(
-                'password',
-                length=42,
-                special_chars=True,
-                digits=True,
-                upper_case=True,
-                lower_case=True,
-            ).generate(extra_kwargs={})
-        )
-        self.set_password(password)

@@ -1,18 +1,19 @@
 .PHONY: example style style-check test test-cov
 
 example:
-	python example/manage.py runserver
+	poetry run python example/manage.py runserver
 
 style:
-	isort .
-	brunette .
+	poetry run isort .
+	poetry run black .
 
 style-check:
-	isort -c .
-	brunette --check .
+	poetry run isort -c .
+	poetry run black --check .
 
 test:
-	pytest
+	poetry run pytest
 
 test-cov:
-	pytest --cov=rest_batteries --cov-branch --cov-report=term:skip-covered --cov-report=html
+	poetry run pytest --cov=rest_batteries --cov-branch --cov-report=term:skip-covered --cov-report=html
+	poetry run coverage xml
