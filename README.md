@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/defineimpossible/django-rest-batteries.svg?branch=master)](https://travis-ci.org/github/defineimpossible/django-rest-batteries)
+[![Test](https://github.com/defineimpossible/django-rest-batteries/actions/workflows/test.yml/badge.svg)](https://github.com/defineimpossible/django-rest-batteries/actions/workflows/test.yml)
 [![Coverage](https://codecov.io/gh/defineimpossible/django-rest-batteries/branch/master/graph/badge.svg)](https://codecov.io/gh/defineimpossible/django-rest-batteries)
 
 # Django REST Framework Batteries
