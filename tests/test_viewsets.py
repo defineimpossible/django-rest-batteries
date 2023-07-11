@@ -1,5 +1,8 @@
 import pytest
 from django.contrib.auth import get_user_model
+from rest_framework import routers
+from rest_framework.permissions import AllowAny, IsAuthenticated
+
 from rest_batteries.mixins import (
     CreateModelMixin,
     DestroyModelMixin,
@@ -9,8 +12,6 @@ from rest_batteries.mixins import (
     RetrieveModelMixin,
 )
 from rest_batteries.viewsets import GenericViewSet, ModelViewSet
-from rest_framework import routers
-from rest_framework.permissions import AllowAny, IsAuthenticated
 
 from . import factories as f
 from .models import Article, Comment
@@ -105,9 +106,7 @@ class TestArticleViewSet:
     def test_create_article(self, test_user_api_client):
         title = 'test-article-title'
         text = 'test-article-text'
-        response = test_user_api_client.post(
-            f'/articles/', {'title': title, 'text': text}
-        )
+        response = test_user_api_client.post('/articles/', {'title': title, 'text': text})
         assert response.status_code == 201
         assert response.data['title'] == title
         assert response.data['text'] == text
@@ -115,7 +114,7 @@ class TestArticleViewSet:
     def test_create_article__when_not_authenticated(self, api_client):
         title = 'test-article-title'
         text = 'test-article-text'
-        response = api_client.post(f'/articles/', {'title': title, 'text': text})
+        response = api_client.post('/articles/', {'title': title, 'text': text})
         assert response.status_code == 403
 
     def test_retrieve_article(self, api_client):
@@ -128,7 +127,7 @@ class TestArticleViewSet:
     def test_list_articles(self, api_client):
         article_1 = f.ArticleFactory.create()
 
-        response = api_client.get(f'/articles/')
+        response = api_client.get('/articles/')
         assert response.status_code == 200
         assert len(response.data) == 1
         assert response.data[0] == ArticleResponseSerializer(article_1).data
@@ -151,18 +150,14 @@ class TestArticleViewSet:
 
         title = 'test-article-title'
         text = 'test-article-text'
-        response = api_client.put(
-            f'/articles/{article_1.id}/', {'title': title, 'text': text}
-        )
+        response = api_client.put(f'/articles/{article_1.id}/', {'title': title, 'text': text})
         assert response.status_code == 403
 
     def test_partial_update_article__method_not_allowed(self, test_user_api_client):
         article_1 = f.ArticleFactory.create()
 
         title = 'test-article-title'
-        response = test_user_api_client.patch(
-            f'/articles/{article_1.id}/', {'title': title}
-        )
+        response = test_user_api_client.patch(f'/articles/{article_1.id}/', {'title': title})
         assert response.status_code == 405
 
     def test_destroy_article(self, test_user_api_client):
@@ -201,9 +196,7 @@ class TestCommentViewSet:
         article_1 = f.ArticleFactory.create()
 
         text = 'test-comment-text'
-        response = api_client.post(
-            f'/comments/', {'article_id': article_1.id, 'text': text}
-        )
+        response = api_client.post('/comments/', {'article_id': article_1.id, 'text': text})
         assert response.status_code == 201
         assert response.data['text'] == text
 
@@ -217,7 +210,7 @@ class TestCommentViewSet:
     def test_list_comments(self, api_client):
         comment_1 = f.CommentFactory.create()
 
-        response = api_client.get(f'/comments/')
+        response = api_client.get('/comments/')
         assert response.status_code == 200
         assert len(response.data) == 1
         assert response.data[0] == CommentResponseSerializer(comment_1).data

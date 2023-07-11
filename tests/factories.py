@@ -1,5 +1,3 @@
-from typing import Any, Sequence
-
 import factory
 from django.contrib.auth import get_user_model
 

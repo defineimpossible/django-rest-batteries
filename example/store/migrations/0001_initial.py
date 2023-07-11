@@ -67,9 +67,7 @@ class Migration(migrations.Migration):
                 ),
                 (
                     'quantity',
-                    models.IntegerField(
-                        validators=[django.core.validators.MinValueValidator(1)]
-                    ),
+                    models.IntegerField(validators=[django.core.validators.MinValueValidator(1)]),
                 ),
                 (
                     'order',

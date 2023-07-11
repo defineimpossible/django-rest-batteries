@@ -57,7 +57,8 @@ class GenericViewSet(viewsets.ViewSetMixin, GenericAPIView):
 
     def raise_request_serializer_error(self):
         raise ImproperlyConfigured(
-            f'{self.__class__.__name__} should properly configure `request_action_serializer_classes` attribute'
+            f'{self.__class__.__name__} should properly configure '
+            '`request_action_serializer_classes` attribute'
         )
 
     def get_response_serializer_class_or_none(self) -> Optional[Type[BaseSerializer]]:
@@ -75,7 +76,8 @@ class GenericViewSet(viewsets.ViewSetMixin, GenericAPIView):
 
     def raise_response_serializer_error(self):
         raise ImproperlyConfigured(
-            f'{self.__class__.__name__} should properly configure `response_action_serializer_classes` attribute'
+            f'{self.__class__.__name__} should properly configure '
+            '`response_action_serializer_classes` attribute'
         )
 
     def raise_serializer_error(self):

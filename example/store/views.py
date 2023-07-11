@@ -1,7 +1,8 @@
-from rest_batteries.mixins import CreateModelMixin, ListModelMixin
-from rest_batteries.viewsets import GenericViewSet
 from rest_framework.decorators import action
 from rest_framework.response import Response
+
+from rest_batteries.mixins import CreateModelMixin, ListModelMixin
+from rest_batteries.viewsets import GenericViewSet
 
 from .models import Order
 from .serializers import OrderCreateSerializer, OrderResponseSerializer

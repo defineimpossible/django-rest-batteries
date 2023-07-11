@@ -1,15 +1,15 @@
-.PHONY: example style style-check test test-cov
+.PHONY: example check lint test test-cov
 
 example:
 	poetry run python example/manage.py runserver
 
-style:
-	poetry run isort .
-	poetry run black .
-
-style-check:
-	poetry run isort -c .
+check:
 	poetry run black --check .
+	poetry run ruff check .
+
+lint:
+	poetry run black .
+	poetry run ruff --fix .
 
 test:
 	poetry run pytest

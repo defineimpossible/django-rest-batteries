@@ -95,9 +95,7 @@ class ErrorsFormatter:
         message_value = errors_dict.get(self.MESSAGE, None)
 
         # Note: If 'message' is name of a field we don't want to stop the recursion here!
-        if message_value is not None and (
-            type(message_value) in {str, exceptions.ErrorDetail}
-        ):
+        if message_value is not None and (type(message_value) in {str, exceptions.ErrorDetail}):
             if field_path:
                 errors_dict[self.FIELD] = field_path
             return [errors_dict]
@@ -126,9 +124,7 @@ class ErrorsFormatter:
                     else:
                         path = '{0}[{1}]'.format(new_field_path, index)
                         current_level_error_list.extend(
-                            self._get_list_of_errors(
-                                field_path=path, errors_dict=field_error
-                            )
+                            self._get_list_of_errors(field_path=path, errors_dict=field_error)
                         )
             else:
                 path = field_path if key_is_non_field_errors else new_field_path

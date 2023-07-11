@@ -1,5 +1,6 @@
 import pytest
 from django.urls import path
+
 from rest_batteries.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 
 from . import factories as f
@@ -62,7 +63,7 @@ class TestArticlesView:
     def test_create_article(self, api_client):
         title = 'test-article-title'
         text = 'test-article-text'
-        response = api_client.post(f'/articles/', {'title': title, 'text': text})
+        response = api_client.post('/articles/', {'title': title, 'text': text})
         assert response.status_code == 201
         assert response.data['title'] == title
         assert response.data['text'] == text
@@ -70,7 +71,7 @@ class TestArticlesView:
     def test_list_articles(self, api_client):
         article_1 = f.ArticleFactory.create()
 
-        response = api_client.get(f'/articles/')
+        response = api_client.get('/articles/')
         assert response.status_code == 200
         assert len(response.data) == 1
         assert response.data[0] == ArticleResponseSerializer(article_1).data
@@ -89,9 +90,7 @@ class TestArticleView:
 
         title = 'test-article-title'
         text = 'test-article-text'
-        response = api_client.put(
-            f'/articles/{article_1.id}/', {'title': title, 'text': text}
-        )
+        response = api_client.put(f'/articles/{article_1.id}/', {'title': title, 'text': text})
         assert response.status_code == 200
         assert response.data['id'] == article_1.id
         assert response.data['title'] == title
@@ -121,9 +120,7 @@ class TestArticleView:
         f.CommentFactory.create(article=article_1)
         f.CommentFactory.create(article=article_1)
 
-        response = api_client.delete(
-            f'/articles/{article_1.id}/', {'with_comments': True}
-        )
+        response = api_client.delete(f'/articles/{article_1.id}/', {'with_comments': True})
         assert response.status_code == 204
         assert Article.objects.get(id=article_1.id).is_deleted is True
         assert Article.objects.get(id=article_1.id).comments.count() == 0
@@ -134,16 +131,14 @@ class TestCommentsView:
         article_1 = f.ArticleFactory.create()
 
         text = 'test-comment-text'
-        response = api_client.post(
-            f'/comments/', {'article_id': article_1.id, 'text': text}
-        )
+        response = api_client.post('/comments/', {'article_id': article_1.id, 'text': text})
         assert response.status_code == 201
         assert response.data['text'] == text
 
     def test_list_comments(self, api_client):
         comment_1 = f.CommentFactory.create()
 
-        response = api_client.get(f'/comments/')
+        response = api_client.get('/comments/')
         assert response.status_code == 200
         assert len(response.data) == 1
         assert response.data[0] == CommentResponseSerializer(comment_1).data
