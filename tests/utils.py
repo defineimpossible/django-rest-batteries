@@ -4,12 +4,7 @@ from rest_framework.test import APIClient as DRFClient
 
 
 class APIClient(DRFClient):
-    def login(
-        self,
-        user=None,
-        backend='django.contrib.auth.backends.ModelBackend',
-        **credentials
-    ):
+    def login(self, user=None, backend='django.contrib.auth.backends.ModelBackend', **credentials):
         if user is None:
             return super().login(**credentials)
 

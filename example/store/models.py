@@ -10,9 +10,7 @@ class Product(models.Model):
 
 
 class Order(models.Model):
-    status = models.PositiveIntegerField(
-        choices=OrderStatus.choices, default=OrderStatus.DRAFT
-    )
+    status = models.PositiveIntegerField(choices=OrderStatus.choices, default=OrderStatus.DRAFT)
 
     @property
     def total_price(self):
@@ -21,9 +19,7 @@ class Order(models.Model):
 
 class OrderLine(models.Model):
     order = models.ForeignKey('Order', related_name='lines', on_delete=models.CASCADE)
-    product = models.ForeignKey(
-        'Product', related_name='order_lines', on_delete=models.CASCADE
-    )
+    product = models.ForeignKey('Product', related_name='order_lines', on_delete=models.CASCADE)
     quantity = models.IntegerField(validators=[MinValueValidator(1)])
 
     class Meta:

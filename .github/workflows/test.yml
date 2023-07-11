@@ -43,8 +43,8 @@ jobs:
       - name: Upgrade drf version
         run: |
           poetry run pip install "djangorestframework==${{ matrix.drf-version }}"
-      - name: Run style checks
-        run: make style-check
+      - name: Run code quality checks
+        run: make check
       - name: Run tests
         run: make test-cov
       - name: Upload coverage to Codecov

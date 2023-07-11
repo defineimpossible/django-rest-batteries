@@ -25,9 +25,7 @@ class GenericAPIView(DjangoValidationErrorTransformMixin, generics.GenericAPIVie
             self.raise_request_serializer_error()
         return serializer
 
-    def get_request_serializer_or_none(
-        self, *args, **kwargs
-    ) -> Optional[BaseSerializer]:
+    def get_request_serializer_or_none(self, *args, **kwargs) -> Optional[BaseSerializer]:
         serializer_class = self.get_request_serializer_class_or_none()
         if serializer_class is not None:
             kwargs.setdefault('context', self.get_request_serializer_context())
@@ -43,7 +41,8 @@ class GenericAPIView(DjangoValidationErrorTransformMixin, generics.GenericAPIVie
 
     def raise_request_serializer_error(self):
         raise ImproperlyConfigured(
-            f'{self.__class__.__name__} should properly configure `request_serializer_class` attribute'
+            f'{self.__class__.__name__} should properly configure '
+            '`request_serializer_class` attribute'
         )
 
     def get_response_serializer(self, *args, **kwargs) -> BaseSerializer:
@@ -52,9 +51,7 @@ class GenericAPIView(DjangoValidationErrorTransformMixin, generics.GenericAPIVie
             self.raise_response_serializer_error()
         return serializer
 
-    def get_response_serializer_or_none(
-        self, *args, **kwargs
-    ) -> Optional[BaseSerializer]:
+    def get_response_serializer_or_none(self, *args, **kwargs) -> Optional[BaseSerializer]:
         serializer_class = self.get_response_serializer_class_or_none()
         if serializer_class is not None:
             kwargs.setdefault('context', self.get_response_serializer_context())
@@ -68,7 +65,8 @@ class GenericAPIView(DjangoValidationErrorTransformMixin, generics.GenericAPIVie
 
     def raise_response_serializer_error(self):
         raise ImproperlyConfigured(
-            f'{self.__class__.__name__} should properly configure `response_serializer_class` attribute'
+            f'{self.__class__.__name__} should properly configure '
+            '`response_serializer_class` attribute'
         )
 
     def get_serializer_class(self) -> Type[BaseSerializer]:

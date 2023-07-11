@@ -1,10 +1,11 @@
 import pytest
 from django.core.exceptions import ValidationError
 from django.urls import path
-from rest_batteries.errors_formatter import ErrorsFormatter
-from rest_batteries.views import APIView
 from rest_framework import serializers
 from rest_framework.views import exception_handler as drf_exception_handler
+
+from rest_batteries.errors_formatter import ErrorsFormatter
+from rest_batteries.views import APIView
 
 from .models import Article
 
@@ -47,9 +48,7 @@ class APIViewRaisesArrayFieldValidationError(APIView):
             children = ChildSerializer(many=True)
 
         serializer = ParentSerializer(
-            data={
-                'children': [{'text': 'comment-text'}, {'text': False}, {'text': False}]
-            }
+            data={'children': [{'text': 'comment-text'}, {'text': False}, {'text': False}]}
         )
         serializer.is_valid(raise_exception=True)
 
@@ -105,9 +104,7 @@ def custom_exception_handler(settings):
 
 
 class TestAPIViewErrors:
-    def test_django_validation_error_transforms_into_drf_validation_error(
-        self, api_client
-    ):
+    def test_django_validation_error_transforms_into_drf_validation_error(self, api_client):
         response = api_client.post('/django-validation-error/')
         assert response.status_code == 400
         assert response.data == ['Django validation error raised']
