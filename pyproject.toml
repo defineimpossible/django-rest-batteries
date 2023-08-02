@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "django-rest-batteries"
-version = "1.4.0"
+version = "1.4.1"
 description = "Build clean APIs with DRF faster"
 authors = ["Define Impossible <hi@defineimpossible.io>"]
 packages = [
