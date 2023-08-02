@@ -19,8 +19,8 @@ keywords = [
 
 [tool.poetry.dependencies]
 python = "^3.8"
-django = "^3.2"
-djangorestframework = "^3.12.2"
+django = ">=3.2"
+djangorestframework = ">=3.12.2"
 
 [tool.poetry.group.dev.dependencies]
 django-debug-toolbar = "^4.1.0"
